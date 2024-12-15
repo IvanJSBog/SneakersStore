@@ -22,14 +22,47 @@ const onChangeSearchInput = (event) => {
 
 const fetchFavorites = async () => {
   try {
-    const { data } = await axios.get('https://8978a95badfad524.mokky.dev/favorites')
+    const { data: favorites } = await axios.get('https://8978a95badfad524.mokky.dev/favorites')
 
-    items.value = data
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.parentId === item.id)
+
+      if (!favorite) {
+        return item
+      }
+
+      return {
+        ...item,
+        isLiked: true,
+        likedId: favorite.id,
+      }
+    })
   } catch (error) {
     console.log(error)
   }
 }
 
+const addToFavorite = async (item) => {
+  try {
+    if (!item.isLiked) {
+      const obj = {
+        parentId: item.id,
+      }
+
+      item.isLiked = true
+
+      const { data } = await axios.post('https://8978a95badfad524.mokky.dev/favorites', obj)
+
+      item.likedId = data.id
+    } else {
+      item.isLiked = false
+      await axios.delete(`https://8978a95badfad524.mokky.dev/favorites/${item.likedId}`)
+      item.favoriteId = null
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 const fetchItems = async () => {
   try {
     const params = {
@@ -48,6 +81,7 @@ const fetchItems = async () => {
     items.value = data.map((item) => ({
       ...item,
       isAdded: false,
+      likedId: null,
       isLiked: false,
     }))
   } catch (error) {
@@ -56,8 +90,8 @@ const fetchItems = async () => {
 }
 
 onMounted(async () => {
-  await fetchItems();
-  await fetchFavorites();
+  await fetchItems()
+  await fetchFavorites()
 })
 watch(filters, fetchItems)
 </script>
@@ -86,7 +120,7 @@ watch(filters, fetchItems)
           />
         </div>
       </div>
-      <CardList :items="items" />
+      <CardList :items="items" @addToFavorite="addToFavorite" />
     </div>
   </div>
 </template>
