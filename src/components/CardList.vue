@@ -4,11 +4,8 @@ import SneakersCard from './SneakersCard.vue'
 defineProps({
   items: Array
 })
-
-const emit = defineEmits(['addToFavorite']);
-
+const emit = defineEmits(['addToFavorite', 'addToCart']);
 </script>
-
 <template>
   <div class="grid grid-cols-4 gap-5 p-5">
     <SneakersCard
@@ -18,9 +15,10 @@ const emit = defineEmits(['addToFavorite']);
       :imageUrl="item.imageUrl"
       :title="item.title"
       :price="item.price"
-      :isAdded="false"
+      :isAdded="item.isAdded"
       :isLiked="item.isLiked"
       :onClickLike="() => emit('addToFavorite', item)"
+      :onClickAdd="() => emit('addToCart', item)"
     />
   </div>
 </template>

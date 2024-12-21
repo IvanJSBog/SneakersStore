@@ -7,9 +7,8 @@ defineProps({
   isLiked: Boolean,
   isAdded: Boolean,
   onClickLike: Function,
-  onClickAdd: Function
+  onClickAdd: Function,
 })
-
 </script>
 <template>
   <div
@@ -23,13 +22,11 @@ defineProps({
     />
     <img :src="imageUrl" alt="Sneakers" />
     <p>{{ title }}</p>
-
     <div class="flex justify-between">
       <div class="flex flex-col">
         <span class="font-bold">Цена:</span>
         <span>{{ price }} $</span>
       </div>
-
       <img @click="onClickAdd" :src="isAdded ? '/checked.svg' : '/plus.svg'" alt="Plus" />
     </div>
   </div>
